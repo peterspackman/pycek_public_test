@@ -206,21 +206,21 @@
 	}
 
 	.lab-card {
-		background: #fff;
-		border: 1px solid #e1e1e1;
-		border-radius: 8px;
-		padding: 20px;
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		padding: 1.5rem;
 		text-decoration: none;
-		transition:
-			transform 0.2s,
-			box-shadow 0.2s;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		transition: all 0.2s ease;
+		box-shadow: var(--shadow-sm);
+		display: block;
 	}
 
 	.lab-card:hover {
-		transform: translateY(-3px);
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-md);
 		text-decoration: none;
+		border-color: var(--color-primary);
 	}
 
 	.lab-card h3 {

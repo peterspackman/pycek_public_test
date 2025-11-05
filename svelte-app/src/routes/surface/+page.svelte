@@ -67,53 +67,59 @@
 </svelte:head>
 
 <div class="container">
-	<h1>Surface Adsorption Lab</h1>
+	<header class="lab-header">
+		<h1>Surface Adsorption Lab</h1>
+		<p class="subtitle">Dye adsorption on chitin surface - Langmuir isotherm analysis</p>
+	</header>
 
-	<div class="markdown-content">
+	<div class="card lab-description">
 		<p>
-			In the virtual laboratory below, we will be looking at the adsorption of the dye Acid Blue
-			158 on chitin in water. The simulated experiments mimic different conditions and will be used
-			to determine the enthalpy of adsorption of the dye on the substrate. The output file contains
-			the concentration of the dye left in solution, as a function of the amount that was added to
-			the beaker with the kitin powder.
+			In this virtual laboratory, we study the adsorption of <strong>Acid Blue 158</strong> dye on
+			chitin in water. The experiments simulate different temperature conditions to determine the
+			enthalpy of adsorption. The output contains the concentration of dye remaining in solution as
+			a function of the amount added.
 		</p>
 
-		<h2>Objectives</h2>
-		<ol>
-			<li>Calculation of the Langmuir constant (K<sub>L</sub>) and the monolayer coverage (Q) at different temperatures</li>
-			<li>
-				Compare the fitted values obtained from fitting both forms of the Langmuir isotherm
-				(linear and non-linear)
-			</li>
-			<li>Calculation of the adsorption enthalpy</li>
-			<li>Comparison with the provided experimental value</li>
-		</ol>
+		<details open>
+			<summary><strong>Objectives</strong></summary>
+			<ol>
+				<li>Calculate Langmuir constant (K<sub>L</sub>) and monolayer coverage (Q) at different temperatures</li>
+				<li>Compare fitted values from linear and non-linear Langmuir isotherms</li>
+				<li>Calculate adsorption enthalpy</li>
+				<li>Compare with provided experimental values</li>
+			</ol>
+		</details>
 
-		<h2>Instructions</h2>
-		<ol>
-			<li>Type your student ID</li>
-			<li>Select the temperature of the experiment</li>
-			<li>Click "Run Experiment"</li>
-			<li>Perform experiments at 5 different temperatures</li>
-		</ol>
-		<hr />
+		<details>
+			<summary><strong>Instructions</strong></summary>
+			<ol>
+				<li>Enter your student ID</li>
+				<li>Select experiment temperature</li>
+				<li>Click "Run Experiment"</li>
+				<li>Repeat at 5 different temperatures for analysis</li>
+			</ol>
+		</details>
 	</div>
 
-	<div class="controls">
+	<div class="card">
+		<h3 style="margin-top: 0;">Experiment Parameters</h3>
+
 		<div class="form-group">
-			<label for="studentID">Student ID:</label>
+			<label class="form-label" for="studentID">Student ID</label>
 			<input
+				class="form-input"
 				id="studentID"
 				type="text"
 				bind:value={studentID}
 				on:input={setID}
-				placeholder="Enter student ID"
+				placeholder="Enter your student ID"
 			/>
 		</div>
 
 		<div class="form-group">
-			<label for="outputFile">Output file:</label>
+			<label class="form-label" for="outputFile">Output Filename</label>
 			<input
+				class="form-input"
 				id="outputFile"
 				type="text"
 				bind:value={outputFile}
@@ -123,155 +129,76 @@
 		</div>
 
 		<div class="form-group">
-			<label for="temperature">Temperature (°C):</label>
-			<input id="temperature" type="number" bind:value={temperature} min="0" max="100" step="1" />
+			<label class="form-label" for="temperature">Temperature (°C)</label>
+			<input class="form-input" id="temperature" type="number" bind:value={temperature} min="0" max="100" step="1" />
 		</div>
 
 		{#if error}
-			<div class="error">{error}</div>
+			<div class="alert alert-error">{error}</div>
 		{/if}
 
-		<div class="button-group">
-			<button on:click={runExperiment}>Run Experiment</button>
-			<button on:click={resetCounter}>Reset Counter</button>
+		<div class="btn-group">
+			<button class="btn btn-primary" on:click={runExperiment}>Run Experiment</button>
+			<button class="btn btn-outline" on:click={resetCounter}>Reset Counter</button>
 		</div>
 	</div>
 
 	{#if showResults}
-		<div class="results">
-			<div class="info-panel">
-				<div class="metadata">
-					{@html message.replace(/###/g, '<h3>').replace(/####/g, '<p>')}
-				</div>
-				<button on:click={handleDownload} class="download-btn">Download {filename}</button>
+		<div class="results-panel">
+			<div class="metadata-card">
+				<h3>Experiment Results</h3>
+				{@html message.replace(/###/g, '').replace(/####/g, '<p>').replace('Running Experiment', '')}
+				<button class="btn btn-secondary" on:click={handleDownload} style="margin-top: 1rem;">
+					Download {filename}
+				</button>
 			</div>
 
 			{#if data.length > 0}
-				<Plot {data} xLabel="Dye added (mg)" yLabel="Dye in solution (mol/L)" />
+				<div class="card">
+					<Plot {data} xLabel="Dye added (mg)" yLabel="Dye in solution (mol/L)" />
+				</div>
 			{/if}
 		</div>
 	{/if}
 </div>
 
 <style>
-	.container {
-		max-width: 900px;
-		margin: 0 auto;
-		padding: 20px;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-			sans-serif;
+	.lab-header {
+		margin-bottom: 2rem;
 	}
 
-	h1 {
-		color: #2c3e50;
-		border-bottom: 2px solid #eee;
-		padding-bottom: 10px;
+	.subtitle {
+		font-size: 1.1rem;
+		color: var(--color-text-secondary);
+		margin-top: 0.5rem;
+		font-weight: 400;
 	}
 
-	.markdown-content {
-		margin: 20px 0;
+	.lab-description {
+		margin-bottom: 1.5rem;
 	}
 
-	.markdown-content h2 {
-		color: #34495e;
-		margin-top: 20px;
+	details {
+		margin-top: 1.5rem;
 	}
 
-	.controls {
-		background: #f8f9fa;
-		padding: 20px;
-		border-radius: 8px;
-		margin: 20px 0;
-	}
-
-	.form-group {
-		margin-bottom: 15px;
-	}
-
-	.form-group label {
-		display: block;
-		margin-bottom: 5px;
-		font-weight: 500;
-		color: #333;
-	}
-
-	.form-group input {
-		width: 100%;
-		padding: 8px 12px;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		font-size: 14px;
-		box-sizing: border-box;
-	}
-
-	.button-group {
-		display: flex;
-		gap: 10px;
-		margin-top: 20px;
-	}
-
-	button {
-		padding: 10px 20px;
-		background: #3498db;
-		color: white;
-		border: none;
-		border-radius: 4px;
+	summary {
 		cursor: pointer;
-		font-size: 14px;
-		font-weight: 500;
-		transition: background 0.2s;
+		padding: 0.5rem 0;
+		user-select: none;
 	}
 
-	button:hover {
-		background: #2980b9;
+	summary:hover {
+		color: var(--color-primary);
 	}
 
-	.error {
-		color: #e74c3c;
-		padding: 10px;
-		background: #fadbd8;
-		border-radius: 4px;
-		margin-top: 10px;
+	details ol {
+		margin-top: 0.75rem;
+		padding-left: 1.5rem;
 	}
 
-	.results {
-		margin-top: 30px;
-	}
-
-	.info-panel {
-		background: #f8f9fa;
-		padding: 20px;
-		border-radius: 8px;
-		margin-bottom: 20px;
-	}
-
-	.metadata {
-		margin-bottom: 15px;
-	}
-
-	.metadata :global(h3) {
-		color: #34495e;
-		margin: 10px 0 5px 0;
-		font-size: 18px;
-	}
-
-	.metadata :global(p) {
-		color: #555;
-		margin: 5px 0;
-		font-size: 14px;
-	}
-
-	.download-btn {
-		background: #27ae60;
-	}
-
-	.download-btn:hover {
-		background: #229954;
-	}
-
-	hr {
-		border: none;
-		border-top: 1px solid #ddd;
-		margin: 20px 0;
+	details li {
+		margin: 0.5rem 0;
+		color: var(--color-text-secondary);
 	}
 </style>
