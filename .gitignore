@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/  # Commented out - conflicts with svelte-app/src/lib/
 lib64/
 parts/
 sdist/
