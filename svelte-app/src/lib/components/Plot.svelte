@@ -6,6 +6,7 @@
 	export let xLabel = 'X';
 	export let yLabel = 'Y';
 	export let title = '';
+	export let yAxisType = 'linear'; // 'linear' or 'logarithmic'
 
 	let canvas;
 	let chart;
@@ -33,20 +34,35 @@
 
 		const ctx = canvas.getContext('2d');
 
-		// Prepare data for Chart.js
-		const chartData = {
-			datasets: [
-				{
-					label: 'Data',
-					data: data.map((row) => ({ x: row[0], y: row[1] })),
-					backgroundColor: 'rgba(54, 162, 235, 0.5)',
-					borderColor: 'rgba(54, 162, 235, 1)',
-					borderWidth: 1,
-					pointRadius: 3,
-					showLine: false
-				}
-			]
-		};
+		// Check if data is in Chart.js format (array of datasets) or simple format
+		let chartData;
+		if (Array.isArray(data) && data.length > 0 && data[0].data) {
+			// Chart.js format: data is an array of dataset objects
+			chartData = {
+				datasets: data.map((dataset) => ({
+					...dataset,
+					showLine: true,
+					pointRadius: 2,
+					borderWidth: 2,
+					tension: 0 // No curve smoothing
+				}))
+			};
+		} else {
+			// Simple format: data is [[x, y], [x, y], ...]
+			chartData = {
+				datasets: [
+					{
+						label: 'Data',
+						data: data.map((row) => ({ x: row[0], y: row[1] })),
+						backgroundColor: 'rgba(54, 162, 235, 0.5)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 1,
+						pointRadius: 3,
+						showLine: false
+					}
+				]
+			};
+		}
 
 		const config = {
 			type: 'scatter',
@@ -60,12 +76,13 @@
 						text: title
 					},
 					legend: {
-						display: false
+						display: chartData.datasets.length > 1
 					},
 					tooltip: {
 						callbacks: {
 							label: function (context) {
-								return `(${context.parsed.x.toFixed(4)}, ${context.parsed.y.toFixed(4)})`;
+								const label = context.dataset.label || '';
+								return `${label}: (${context.parsed.x.toFixed(4)}, ${context.parsed.y.toFixed(4)})`;
 							}
 						}
 					}
@@ -80,6 +97,7 @@
 						position: 'bottom'
 					},
 					y: {
+						type: yAxisType,
 						title: {
 							display: true,
 							text: yLabel
