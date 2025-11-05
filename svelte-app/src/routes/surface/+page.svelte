@@ -144,17 +144,23 @@
 	</div>
 
 	{#if showResults}
-		<div class="results-panel">
+		<div class="results-grid">
 			<div class="metadata-card">
-				<h3>Experiment Results</h3>
-				{@html message.replace(/###/g, '').replace(/####/g, '<p>').replace('Running Experiment', '')}
-				<button class="btn btn-secondary" on:click={handleDownload} style="margin-top: 1rem;">
-					Download {filename}
-				</button>
+				<h3>Experiment Summary</h3>
+				{#each Object.entries(lab.metadata) as [key, value]}
+					<p><strong>{key}:</strong> {value}</p>
+				{/each}
+				<p><strong>File:</strong> {filename}</p>
+				<div style="margin-top: 1.5rem;">
+					<button class="btn btn-secondary" on:click={handleDownload}>
+						Download Data
+					</button>
+				</div>
 			</div>
 
 			{#if data.length > 0}
 				<div class="card">
+					<h3>Results Plot</h3>
 					<Plot {data} xLabel="Dye added (mg)" yLabel="Dye in solution (mol/L)" />
 				</div>
 			{/if}

@@ -62,9 +62,14 @@
 </svelte:head>
 
 <div class="container">
-	<h1>Crystal Violet Lab</h1>
+	<div class="header">
+		<h1>Crystal Violet Lab</h1>
+		<p class="subtitle">
+			Chemical kinetics and reaction rates using UV-Vis spectrophotometry
+		</p>
+	</div>
 
-	<div class="markdown-content">
+	<div class="card lab-description">
 		<p>
 			This notebook mimics a kinetics laboratory experiment, where a UV-Vis spectrophotometer is
 			used to measure the absorbance as the reaction between crystal violet and hydroxide proceeds.
@@ -72,39 +77,45 @@
 			respect to both crystal violet and hydroxide ions.
 		</p>
 
-		<h2>Objectives</h2>
-		<ol>
-			<li>Determine the reaction order with respect to CV</li>
-			<li>Determine the reaction order with respect to hydroxide</li>
-			<li>Determine the rate constant for the overall reaction</li>
-			<li>Determine the activation energy</li>
-		</ol>
+		<details open>
+			<summary><strong>Objectives</strong></summary>
+			<ol>
+				<li>Determine the reaction order with respect to CV</li>
+				<li>Determine the reaction order with respect to hydroxide</li>
+				<li>Determine the rate constant for the overall reaction</li>
+				<li>Determine the activation energy</li>
+			</ol>
+		</details>
 
-		<h2>Instructions</h2>
-		<ol>
-			<li>Type your student ID</li>
-			<li>Select the volumes of the CV solution, the hydroxide solution and DI water to use</li>
-			<li>Select the temperature of the experiment</li>
-			<li>Click "Run Experiment"</li>
-			<li>
-				Perform two sets of at least three experiments each:
-				<ul>
-					<li>constant [CV] while the [OH<sup>-</sup>] is varied</li>
-					<li>constant [OH<sup>-</sup>] while the [CV] is varied</li>
-				</ul>
-			</li>
-			<li>
-				Obtain another set of data where the temperature is changed and compute the activation
-				energy and pre-exponential factor
-			</li>
-		</ol>
-		<hr />
+		<details open>
+			<summary><strong>Instructions</strong></summary>
+			<ol>
+				<li>Type your student ID</li>
+				<li>Select the volumes of the CV solution, the hydroxide solution and DI water to use</li>
+				<li>Select the temperature of the experiment</li>
+				<li>Click "Run Experiment"</li>
+				<li>
+					Perform two sets of at least three experiments each:
+					<ul>
+						<li>constant [CV] while the [OH<sup>-</sup>] is varied</li>
+						<li>constant [OH<sup>-</sup>] while the [CV] is varied</li>
+					</ul>
+				</li>
+				<li>
+					Obtain another set of data where the temperature is changed and compute the activation
+					energy and pre-exponential factor
+				</li>
+			</ol>
+		</details>
 	</div>
 
-	<div class="controls">
+	<div class="card">
+		<h3>Experiment Parameters</h3>
+
 		<div class="form-group">
-			<label for="studentID">Student ID:</label>
+			<label class="form-label" for="studentID">Student ID</label>
 			<input
+				class="form-input"
 				id="studentID"
 				type="text"
 				bind:value={studentID}
@@ -113,8 +124,9 @@
 		</div>
 
 		<div class="form-group">
-			<label for="outputFile">Output file:</label>
+			<label class="form-label" for="outputFile">Output filename (optional)</label>
 			<input
+				class="form-input"
 				id="outputFile"
 				type="text"
 				bind:value={outputFile}
@@ -123,170 +135,146 @@
 		</div>
 
 		<div class="form-group">
-			<label for="cvVolume">Volume of CV solution (mL):</label>
-			<input id="cvVolume" type="number" bind:value={cvVolume} min="0" max="100" step="1" />
+			<label class="form-label" for="cvVolume">Volume of CV solution (mL)</label>
+			<input
+				class="form-input"
+				id="cvVolume"
+				type="number"
+				bind:value={cvVolume}
+				min="0"
+				max="100"
+				step="1"
+			/>
 		</div>
 
 		<div class="form-group">
-			<label for="ohVolume">Volume of OH solution (mL):</label>
-			<input id="ohVolume" type="number" bind:value={ohVolume} min="0" max="100" step="1" />
+			<label class="form-label" for="ohVolume">Volume of OH solution (mL)</label>
+			<input
+				class="form-input"
+				id="ohVolume"
+				type="number"
+				bind:value={ohVolume}
+				min="0"
+				max="100"
+				step="1"
+			/>
 		</div>
 
 		<div class="form-group">
-			<label for="h2oVolume">Volume of DI water (mL):</label>
-			<input id="h2oVolume" type="number" bind:value={h2oVolume} min="0" max="100" step="1" />
+			<label class="form-label" for="h2oVolume">Volume of DI water (mL)</label>
+			<input
+				class="form-input"
+				id="h2oVolume"
+				type="number"
+				bind:value={h2oVolume}
+				min="0"
+				max="100"
+				step="1"
+			/>
 		</div>
 
 		<div class="form-group">
-			<label for="temperature">Temperature (°C):</label>
-			<input id="temperature" type="number" bind:value={temperature} min="0" max="100" step="1" />
+			<label class="form-label" for="temperature">Temperature (°C)</label>
+			<input
+				class="form-input"
+				id="temperature"
+				type="number"
+				bind:value={temperature}
+				min="0"
+				max="100"
+				step="1"
+			/>
 		</div>
 
 		{#if error}
-			<div class="error">{error}</div>
+			<div class="alert alert-error">{error}</div>
 		{/if}
 
-		<div class="button-group">
-			<button on:click={runExperiment}>Run Experiment</button>
-			<button on:click={resetCounter}>Reset Counter</button>
+		<div class="btn-group">
+			<button class="btn btn-primary" on:click={runExperiment}>Run Experiment</button>
+			<button class="btn btn-outline" on:click={resetCounter}>Reset Counter</button>
 		</div>
 	</div>
 
 	{#if showResults}
-		<div class="results">
-			<div class="info-panel">
-				<div class="metadata">
-					{@html message.replace(/###/g, '<h3>').replace(/####/g, '<p>')}
+		<div class="results-grid">
+			<div class="metadata-card">
+				<h3>Experiment Summary</h3>
+				{#each Object.entries(lab.metadata) as [key, value]}
+					<p><strong>{key}:</strong> {value}</p>
+				{/each}
+				<p><strong>File:</strong> {filename}</p>
+				<div style="margin-top: 1.5rem;">
+					<button class="btn btn-secondary" on:click={handleDownload}>
+						Download Data
+					</button>
 				</div>
-				<button on:click={handleDownload} class="download-btn">Download {filename}</button>
 			</div>
 
 			{#if data.length > 0}
-				<Plot {data} xLabel="Time (s)" yLabel="Absorbance" />
+				<div class="card">
+					<h3>Results Plot</h3>
+					<Plot {data} xLabel="Time (s)" yLabel="Absorbance" />
+				</div>
 			{/if}
 		</div>
 	{/if}
 </div>
 
 <style>
-	.container {
-		max-width: 900px;
-		margin: 0 auto;
-		padding: 20px;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-			sans-serif;
+	.header {
+		margin-bottom: 2rem;
 	}
 
-	h1 {
-		color: #2c3e50;
-		border-bottom: 2px solid #eee;
-		padding-bottom: 10px;
+	.subtitle {
+		color: var(--color-text-secondary);
+		font-size: 1.1rem;
+		margin-top: 0.5rem;
 	}
 
-	.markdown-content {
-		margin: 20px 0;
+	.lab-description {
+		margin-bottom: 2rem;
 	}
 
-	.markdown-content h2 {
-		color: #34495e;
-		margin-top: 20px;
+	.lab-description p:first-child {
+		margin-bottom: 1.5rem;
+		color: var(--color-text-secondary);
+		line-height: 1.7;
 	}
 
-	.controls {
-		background: #f8f9fa;
-		padding: 20px;
-		border-radius: 8px;
-		margin: 20px 0;
+	details {
+		margin: 1rem 0;
 	}
 
-	.form-group {
-		margin-bottom: 15px;
-	}
-
-	.form-group label {
-		display: block;
-		margin-bottom: 5px;
-		font-weight: 500;
-		color: #333;
-	}
-
-	.form-group input {
-		width: 100%;
-		padding: 8px 12px;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		font-size: 14px;
-		box-sizing: border-box;
-	}
-
-	.button-group {
-		display: flex;
-		gap: 10px;
-		margin-top: 20px;
-	}
-
-	button {
-		padding: 10px 20px;
-		background: #3498db;
-		color: white;
-		border: none;
-		border-radius: 4px;
+	summary {
 		cursor: pointer;
-		font-size: 14px;
-		font-weight: 500;
-		transition: background 0.2s;
+		padding: 0.75rem 0;
+		color: var(--color-text);
+		user-select: none;
+		list-style-position: outside;
 	}
 
-	button:hover {
-		background: #2980b9;
+	summary:hover {
+		color: var(--color-primary);
 	}
 
-	.error {
-		color: #e74c3c;
-		padding: 10px;
-		background: #fadbd8;
-		border-radius: 4px;
-		margin-top: 10px;
+	details[open] summary {
+		margin-bottom: 0.5rem;
 	}
 
-	.results {
-		margin-top: 30px;
+	details ol,
+	details ul {
+		margin: 0.5rem 0;
+		padding-left: 1.5rem;
 	}
 
-	.info-panel {
-		background: #f8f9fa;
-		padding: 20px;
-		border-radius: 8px;
-		margin-bottom: 20px;
+	details li {
+		margin: 0.5rem 0;
+		color: var(--color-text-secondary);
+		line-height: 1.6;
 	}
 
-	.metadata {
-		margin-bottom: 15px;
-	}
-
-	.metadata :global(h3) {
-		color: #34495e;
-		margin: 10px 0 5px 0;
-		font-size: 18px;
-	}
-
-	.metadata :global(p) {
-		color: #555;
-		margin: 5px 0;
-		font-size: 14px;
-	}
-
-	.download-btn {
-		background: #27ae60;
-	}
-
-	.download-btn:hover {
-		background: #229954;
-	}
-
-	hr {
-		border: none;
-		border-top: 1px solid #ddd;
-		margin: 20px 0;
+	h3 {
+		margin-top: 0;
 	}
 </style>

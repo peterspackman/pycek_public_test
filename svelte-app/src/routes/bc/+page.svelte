@@ -59,46 +59,66 @@
 </svelte:head>
 
 <div class="container">
-	<h1>Bomb Calorimetry Lab</h1>
+	<div class="header">
+		<h1>Bomb Calorimetry Lab</h1>
+		<p class="subtitle">Thermodynamics and heat measurements</p>
+	</div>
 
-	<div class="markdown-content">
+	<div class="card lab-description">
 		<p>
 			This notebook mimics a bomb calorimetry laboratory experiment. In each experiment a tablet of
 			reactant is prepared and combusted in the calorimeter. During the experiment the temperature
 			inside the calorimeter is monitored.
 		</p>
 
-		<h2>Objectives</h2>
-		<ol>
-			<li>Calibration of the calorimeter</li>
-			<li>Calculation of enthalpy of combustion of sucrose</li>
-			<li>Calculation of enthalpy of combustion of naphthalene</li>
-		</ol>
+		<details open>
+			<summary><strong>Objectives</strong></summary>
+			<ol>
+				<li>Calibration of the calorimeter</li>
+				<li>Calculation of enthalpy of combustion of sucrose</li>
+				<li>Calculation of enthalpy of combustion of naphthalene</li>
+			</ol>
+		</details>
 
-		<h2>Instructions</h2>
-		<ol>
-			<li>Type your student ID</li>
-			<li>Select a sample</li>
-			<li>Click "Run Experiment"</li>
-			<li>Perform at least 4 experiments per sample</li>
-		</ol>
-		<hr />
+		<details open>
+			<summary><strong>Instructions</strong></summary>
+			<ol>
+				<li>Type your student ID</li>
+				<li>Select a sample</li>
+				<li>Click "Run Experiment"</li>
+				<li>Perform at least 4 experiments per sample</li>
+			</ol>
+		</details>
 	</div>
 
-	<div class="controls">
+	<div class="card">
+		<h3>Experiment Parameters</h3>
+
 		<div class="form-group">
-			<label for="studentID">Student ID:</label>
-			<input id="studentID" type="text" bind:value={studentID} placeholder="Enter student ID" />
+			<label class="form-label" for="studentID">Student ID</label>
+			<input
+				class="form-input"
+				id="studentID"
+				type="text"
+				bind:value={studentID}
+				placeholder="Enter student ID"
+			/>
 		</div>
 
 		<div class="form-group">
-			<label for="outputFile">Output file:</label>
-			<input id="outputFile" type="text" bind:value={outputFile} placeholder="Automatic" />
+			<label class="form-label" for="outputFile">Output filename (optional)</label>
+			<input
+				class="form-input"
+				id="outputFile"
+				type="text"
+				bind:value={outputFile}
+				placeholder="Automatic"
+			/>
 		</div>
 
 		<div class="form-group">
-			<label for="sample">Select sample:</label>
-			<select id="sample" bind:value={sample}>
+			<label class="form-label" for="sample">Select sample</label>
+			<select class="form-select" id="sample" bind:value={sample}>
 				<option value={null}>--Select--</option>
 				{#each lab.availableSamples as sampleOption}
 					<option value={sampleOption}>{sampleOption}</option>
@@ -107,132 +127,94 @@
 		</div>
 
 		{#if error}
-			<div class="error">{error}</div>
+			<div class="alert alert-error">{error}</div>
 		{/if}
 
-		<div class="button-group">
-			<button on:click={runExperiment}>Run Experiment</button>
-			<button on:click={resetCounter}>Reset Counter</button>
+		<div class="btn-group">
+			<button class="btn btn-primary" on:click={runExperiment}>Run Experiment</button>
+			<button class="btn btn-outline" on:click={resetCounter}>Reset Counter</button>
 		</div>
 	</div>
 
 	{#if showResults}
-		<div class="results">
-			<div class="info-panel">
-				<div class="metadata">
-					{@html message.replace(/###/g, '<h3>').replace(/####/g, '<p>')}
+		<div class="results-grid">
+			<div class="metadata-card">
+				<h3>Experiment Summary</h3>
+				{#each Object.entries(lab.metadata) as [key, value]}
+					<p><strong>{key}:</strong> {value}</p>
+				{/each}
+				<p><strong>File:</strong> {filename}</p>
+				<div style="margin-top: 1.5rem;">
+					<button class="btn btn-secondary" on:click={handleDownload}>
+						Download Data
+					</button>
 				</div>
-				<button on:click={handleDownload} class="download-btn">Download {filename}</button>
 			</div>
 
 			{#if data.length > 0}
-				<Plot {data} xLabel="Time (s)" yLabel="Temperature (K)" />
+				<div class="card">
+					<h3>Results Plot</h3>
+					<Plot {data} xLabel="Time (s)" yLabel="Temperature (K)" />
+				</div>
 			{/if}
 		</div>
 	{/if}
 </div>
 
 <style>
-	.container {
-		max-width: 900px;
-		margin: 0 auto;
-		padding: 20px;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-			sans-serif;
+	.header {
+		margin-bottom: 2rem;
 	}
-	h1 {
-		color: #2c3e50;
-		border-bottom: 2px solid #eee;
-		padding-bottom: 10px;
+
+	.subtitle {
+		color: var(--color-text-secondary);
+		font-size: 1.1rem;
+		margin-top: 0.5rem;
 	}
-	.markdown-content {
-		margin: 20px 0;
+
+	.lab-description {
+		margin-bottom: 2rem;
 	}
-	.markdown-content h2 {
-		color: #34495e;
-		margin-top: 20px;
+
+	.lab-description p:first-child {
+		margin-bottom: 1.5rem;
+		color: var(--color-text-secondary);
+		line-height: 1.7;
 	}
-	.controls {
-		background: #f8f9fa;
-		padding: 20px;
-		border-radius: 8px;
-		margin: 20px 0;
+
+	details {
+		margin: 1rem 0;
 	}
-	.form-group {
-		margin-bottom: 15px;
-	}
-	.form-group label {
-		display: block;
-		margin-bottom: 5px;
-		font-weight: 500;
-		color: #333;
-	}
-	.form-group input,
-	.form-group select {
-		width: 100%;
-		padding: 8px 12px;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		font-size: 14px;
-		box-sizing: border-box;
-	}
-	.button-group {
-		display: flex;
-		gap: 10px;
-		margin-top: 20px;
-	}
-	button {
-		padding: 10px 20px;
-		background: #3498db;
-		color: white;
-		border: none;
-		border-radius: 4px;
+
+	summary {
 		cursor: pointer;
-		font-size: 14px;
-		font-weight: 500;
-		transition: background 0.2s;
+		padding: 0.75rem 0;
+		color: var(--color-text);
+		user-select: none;
+		list-style-position: outside;
 	}
-	button:hover {
-		background: #2980b9;
+
+	summary:hover {
+		color: var(--color-primary);
 	}
-	.error {
-		color: #e74c3c;
-		padding: 10px;
-		background: #fadbd8;
-		border-radius: 4px;
-		margin-top: 10px;
+
+	details[open] summary {
+		margin-bottom: 0.5rem;
 	}
-	.results {
-		margin-top: 30px;
+
+	details ol,
+	details ul {
+		margin: 0.5rem 0;
+		padding-left: 1.5rem;
 	}
-	.info-panel {
-		background: #f8f9fa;
-		padding: 20px;
-		border-radius: 8px;
-		margin-bottom: 20px;
+
+	details li {
+		margin: 0.5rem 0;
+		color: var(--color-text-secondary);
+		line-height: 1.6;
 	}
-	.metadata {
-		margin-bottom: 15px;
-	}
-	.metadata :global(h3) {
-		color: #34495e;
-		margin: 10px 0 5px 0;
-		font-size: 18px;
-	}
-	.metadata :global(p) {
-		color: #555;
-		margin: 5px 0;
-		font-size: 14px;
-	}
-	.download-btn {
-		background: #27ae60;
-	}
-	.download-btn:hover {
-		background: #229954;
-	}
-	hr {
-		border: none;
-		border-top: 1px solid #ddd;
-		margin: 20px 0;
+
+	h3 {
+		margin-top: 0;
 	}
 </style>
