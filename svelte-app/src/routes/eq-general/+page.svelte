@@ -111,393 +111,278 @@
 	/>
 </svelte:head>
 
-<div class="container">
-	<div class="header">
-		<h1>General Equilibrium Solver</h1>
-		<p class="subtitle">Numerical solution for custom reactions</p>
+<div class="min-h-screen bg-gray-50">
+	<div class="bg-white border-b border-gray-200">
+		<div class="max-w-7xl mx-auto px-6 py-6">
+			<h1 class="text-3xl font-bold text-gray-900">General Equilibrium Solver</h1>
+			<p class="mt-2 text-gray-600">Numerical solution for custom reactions</p>
+		</div>
 	</div>
 
-	<div class="card lab-description">
-		<p>
-			This tool solves arbitrary chemical equilibrium equations using an iterative numerical
-			method. You can define custom species names, stoichiometric coefficients, and initial
-			concentrations.
-		</p>
+	<div class="max-w-7xl mx-auto px-6 py-8">
+		<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 text-gray-900">
+			<p class="text-gray-700 leading-relaxed mb-4">
+				This tool solves arbitrary chemical equilibrium equations using an iterative numerical
+				method. You can define custom species names, stoichiometric coefficients, and initial
+				concentrations.
+			</p>
 
-		<details>
-			<summary><strong>How to Use</strong></summary>
-			<ol>
-				<li>Choose the number of species in your reaction</li>
-				<li>Enter species names (e.g., A, B, H+, OH-, etc.)</li>
-				<li>Set stoichiometric coefficients (negative for reactants, positive for products)</li>
-				<li>Enter initial concentrations for each species</li>
-				<li>Set the equilibrium constant and solver parameters</li>
-				<li>Click "Solve Equilibrium" to find the equilibrium concentrations</li>
-			</ol>
-		</details>
-	</div>
-
-	<div class="card">
-		<h3>Reaction Definition</h3>
-
-		<div class="form-group">
-			<label class="form-label" for="nSpecies">Number of species</label>
-			<input
-				class="form-input"
-				id="nSpecies"
-				type="number"
-				bind:value={nSpecies}
-				min="2"
-				max="10"
-				step="1"
-			/>
+			<details class="mt-4">
+				<summary class="font-semibold text-gray-900 cursor-pointer select-none py-2">
+					How to Use
+				</summary>
+				<ol class="list-decimal list-inside space-y-2 text-gray-700 mt-2 ml-2 text-sm">
+					<li>Choose the number of species in your reaction</li>
+					<li>Enter species names (e.g., A, B, H+, OH-, etc.)</li>
+					<li>Set stoichiometric coefficients (negative for reactants, positive for products)</li>
+					<li>Enter initial concentrations for each species</li>
+					<li>Set the equilibrium constant and solver parameters</li>
+					<li>Click "Solve Equilibrium" to find the equilibrium concentrations</li>
+				</ol>
+			</details>
 		</div>
 
-		<div class="equation-display">
-			<strong>Reaction:</strong>
-			<span class="equation-large">{@html renderLatex(equationLatex)}</span>
+		<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 text-gray-900">
+			<h2 class="text-xl font-semibold text-gray-900 mb-6">Reaction Setup</h2>
+
+			<div class="mb-6">
+				<label for="nSpecies" class="block text-sm font-medium text-gray-700 mb-1.5">
+					Number of species
+				</label>
+				<input
+					id="nSpecies"
+					type="number"
+					bind:value={nSpecies}
+					min="2"
+					max="10"
+					step="1"
+					class="w-full max-w-xs px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+				/>
+			</div>
+
+			<div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-center">
+				<span class="font-medium text-gray-900">Reaction:</span>
+				<span class="inline-block ml-2 text-lg">{@html renderLatex(equationLatex)}</span>
+			</div>
+
+			<h3 class="text-base font-semibold text-gray-900 mb-4">Species Configuration</h3>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+				{#each Array(nSpecies) as _, idx}
+					<div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+						<h4 class="text-sm font-semibold text-gray-900 mb-3">Species {idx + 1}</h4>
+						<div class="space-y-3">
+							<div>
+								<label for="species-{idx}" class="block text-xs font-medium text-gray-700 mb-1">
+									Name
+								</label>
+								<input
+									id="species-{idx}"
+									type="text"
+									bind:value={species[idx]}
+									class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+								/>
+							</div>
+							<div>
+								<label for="stoich-{idx}" class="block text-xs font-medium text-gray-700 mb-1">
+									Stoichiometry
+								</label>
+								<input
+									id="stoich-{idx}"
+									type="number"
+									bind:value={stoichiometry[idx]}
+									min="-5"
+									max="5"
+									step="1"
+									class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+								/>
+							</div>
+							<div>
+								<label for="conc-{idx}" class="block text-xs font-medium text-gray-700 mb-1">
+									[{species[idx]}]<sub>0</sub> (M)
+								</label>
+								<input
+									id="conc-{idx}"
+									type="number"
+									bind:value={concentrations[idx]}
+									min="0.001"
+									max="10"
+									step="0.01"
+									class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+								/>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+
+			<h3 class="text-base font-semibold text-gray-900 mb-3">Equilibrium Constant</h3>
+			<div class="mb-6">
+				<label for="Keq" class="block text-sm font-medium text-gray-700 mb-1.5">
+					K<sub>eq</sub>
+				</label>
+				<input
+					id="Keq"
+					type="number"
+					bind:value={Keq}
+					min="0.001"
+					max="1000"
+					step="0.1"
+					class="w-full max-w-xs px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+				/>
+			</div>
+
+			<h3 class="text-base font-semibold text-gray-900 mb-3">Solver Parameters</h3>
+			<div class="grid md:grid-cols-3 gap-4 mb-6">
+				<div>
+					<label for="dc" class="block text-sm font-medium text-gray-700 mb-1.5">
+						δc (Step size)
+					</label>
+					<input
+						id="dc"
+						type="number"
+						bind:value={dc}
+						min="0.0001"
+						max="0.1"
+						step="0.001"
+						class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+					/>
+				</div>
+
+				<div>
+					<label for="tolerance" class="block text-sm font-medium text-gray-700 mb-1.5">
+						Tolerance
+					</label>
+					<input
+						id="tolerance"
+						type="number"
+						bind:value={tolerance}
+						min="0.000001"
+						max="0.001"
+						step="0.000001"
+						class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+					/>
+				</div>
+
+				<div>
+					<label for="maxIter" class="block text-sm font-medium text-gray-700 mb-1.5">
+						Max iterations
+					</label>
+					<input
+						id="maxIter"
+						type="number"
+						bind:value={maxIterations}
+						min="100"
+						max="50000"
+						step="100"
+						class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+					/>
+				</div>
+			</div>
+
+			<h3 class="text-base font-semibold text-gray-900 mb-3">Optimization Options</h3>
+			<div class="space-y-2 mb-6">
+				<label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+					<input type="checkbox" bind:checked={decreaseDc} class="cursor-pointer" />
+					<span>Decrease δc when force changes sign</span>
+				</label>
+				<label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+					<input type="checkbox" bind:checked={increaseDc} class="cursor-pointer" />
+					<span>Increase δc when force keeps same sign</span>
+				</label>
+				<label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+					<input type="checkbox" bind:checked={ensurePositive} class="cursor-pointer" />
+					<span>Ensure all concentrations remain positive</span>
+				</label>
+			</div>
+
+			{#if error}
+				<div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
+					{error}
+				</div>
+			{/if}
+
+			<button
+				on:click={solve}
+				class="w-full bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-amber-600 transition-colors"
+			>
+				Solve Equilibrium
+			</button>
 		</div>
 
-		<div class="species-grid">
-			{#each Array(nSpecies) as _, idx}
-				<div class="species-card">
-					<h4>Species {idx + 1}</h4>
-					<div class="form-group">
-						<label class="form-label">Name</label>
-						<input class="form-input" type="text" bind:value={species[idx]} />
+		{#if showResults && result}
+			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-900">
+				<h2 class="text-xl font-semibold text-gray-900 mb-6">Results</h2>
+
+				<div class="grid lg:grid-cols-3 gap-6">
+					<!-- Summary -->
+					<div class="lg:col-span-1">
+						<div class="bg-amber-600 text-white rounded-lg p-6">
+							<h3 class="font-semibold text-lg mb-4">Solution Summary</h3>
+
+							{#if result.converged}
+								<p class="text-green-200 font-medium mb-4">
+									✓ Converged in {result.iterations} iterations
+								</p>
+							{:else}
+								<p class="text-red-200 font-medium mb-4">
+									✗ Did not converge (max iterations reached)
+								</p>
+							{/if}
+
+							<h4 class="text-sm font-semibold opacity-90 mt-4 mb-2">Initial Conditions</h4>
+							<div class="space-y-1 text-sm">
+								{#each species as name, idx}
+									<p><strong>[{name}]<sub>0</sub>:</strong> {concentrations[idx].toFixed(6)} M</p>
+								{/each}
+								<p>
+									<strong>Q<sub>0</sub>:</strong>
+									{computeQ(concentrations, stoichiometry).toFixed(6)}
+								</p>
+							</div>
+
+							<h4 class="text-sm font-semibold opacity-90 mt-4 mb-2">Final Conditions</h4>
+							<div class="space-y-1 text-sm">
+								{#each species as name, idx}
+									<p>
+										<strong>[{name}]<sub>f</sub>:</strong>
+										{result.finalConcentrations[idx].toFixed(6)} M
+									</p>
+								{/each}
+								<p><strong>Q<sub>f</sub>:</strong> {result.finalQ.toFixed(6)}</p>
+								<p><strong>K<sub>eq</sub>:</strong> {Keq.toFixed(6)}</p>
+								<p>
+									<strong>Error:</strong>
+									{((Math.abs(result.finalQ - Keq) / Keq) * 100).toFixed(4)}%
+								</p>
+							</div>
+						</div>
 					</div>
-					<div class="form-group">
-						<label class="form-label">Stoichiometry</label>
-						<input
-							class="form-input"
-							type="number"
-							bind:value={stoichiometry[idx]}
-							min="-5"
-							max="5"
-							step="1"
-						/>
-					</div>
-					<div class="form-group">
-						<label class="form-label">[{species[idx]}]<sub>0</sub> (M)</label>
-						<input
-							class="form-input"
-							type="number"
-							bind:value={concentrations[idx]}
-							min="0.001"
-							max="10"
-							step="0.01"
-						/>
+
+					<!-- Plots -->
+					<div class="lg:col-span-2 space-y-6">
+						<div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+							<h3 class="text-base font-semibold text-gray-900 mb-3">Concentration vs Iteration</h3>
+							{#if concentrationData.length > 0}
+								<Plot data={concentrationData} xLabel="Iteration" yLabel="Concentration (M)" />
+							{/if}
+						</div>
+
+						<div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+							<h3 class="text-base font-semibold text-gray-900 mb-3">
+								Force vs Iteration (log scale)
+							</h3>
+							{#if forceData.length > 0}
+								<Plot
+									data={forceData}
+									xLabel="Iteration"
+									yLabel="|Force|"
+									yAxisType="logarithmic"
+								/>
+							{/if}
+						</div>
 					</div>
 				</div>
-			{/each}
-		</div>
-
-		<h3>Equilibrium Constant</h3>
-		<div class="form-group">
-			<label class="form-label" for="Keq">K<sub>eq</sub></label>
-			<input
-				class="form-input"
-				id="Keq"
-				type="number"
-				bind:value={Keq}
-				min="0.001"
-				max="1000"
-				step="0.1"
-			/>
-		</div>
-
-		<h3>Solver Parameters</h3>
-		<div class="form-grid">
-			<div class="form-group">
-				<label class="form-label" for="dc">δc (Step size)</label>
-				<input
-					class="form-input"
-					id="dc"
-					type="number"
-					bind:value={dc}
-					min="0.0001"
-					max="0.1"
-					step="0.001"
-				/>
 			</div>
-
-			<div class="form-group">
-				<label class="form-label" for="tolerance">Tolerance</label>
-				<input
-					class="form-input"
-					id="tolerance"
-					type="number"
-					bind:value={tolerance}
-					min="0.000001"
-					max="0.001"
-					step="0.000001"
-				/>
-			</div>
-
-			<div class="form-group">
-				<label class="form-label" for="maxIter">Max iterations</label>
-				<input
-					class="form-input"
-					id="maxIter"
-					type="number"
-					bind:value={maxIterations}
-					min="100"
-					max="50000"
-					step="100"
-				/>
-			</div>
-		</div>
-
-		<h3>Optimization Options</h3>
-		<div class="checkbox-group">
-			<label class="checkbox-label">
-				<input type="checkbox" bind:checked={decreaseDc} />
-				<span>Decrease δc when force changes sign</span>
-			</label>
-			<label class="checkbox-label">
-				<input type="checkbox" bind:checked={increaseDc} />
-				<span>Increase δc when force keeps same sign</span>
-			</label>
-			<label class="checkbox-label">
-				<input type="checkbox" bind:checked={ensurePositive} />
-				<span>Ensure all concentrations remain positive</span>
-			</label>
-		</div>
-
-		{#if error}
-			<div class="alert alert-error">{error}</div>
 		{/if}
-
-		<div class="btn-group">
-			<button class="btn btn-primary" on:click={solve}>Solve Equilibrium</button>
-		</div>
 	</div>
-
-	{#if showResults && result}
-		<div class="results-section">
-			<div class="metadata-card">
-				<h3>Solution Summary</h3>
-
-				{#if result.converged}
-					<p class="success-message">✓ Converged in {result.iterations} iterations</p>
-				{:else}
-					<p class="error-message">✗ Did not converge (max iterations reached)</p>
-				{/if}
-
-				<h4>Initial Conditions</h4>
-				{#each species as name, idx}
-					<p><strong>[{name}]<sub>0</sub>:</strong> {concentrations[idx].toFixed(6)} M</p>
-				{/each}
-				<p>
-					<strong>Q<sub>0</sub>:</strong>
-					{computeQ(concentrations, stoichiometry).toFixed(6)}
-				</p>
-
-				<h4>Final Conditions</h4>
-				{#each species as name, idx}
-					<p>
-						<strong>[{name}]<sub>f</sub>:</strong>
-						{result.finalConcentrations[idx].toFixed(6)} M
-					</p>
-				{/each}
-				<p><strong>Q<sub>f</sub>:</strong> {result.finalQ.toFixed(6)}</p>
-				<p><strong>K<sub>eq</sub>:</strong> {Keq.toFixed(6)}</p>
-				<p>
-					<strong>Error:</strong>
-					{((Math.abs(result.finalQ - Keq) / Keq) * 100).toFixed(4)}%
-				</p>
-			</div>
-
-			<div class="plots-container">
-				<div class="card">
-					<h3>Concentration vs Iteration</h3>
-					<Plot data={concentrationData} xLabel="Iteration" yLabel="Concentration (M)" />
-				</div>
-
-				<div class="card">
-					<h3>Force vs Iteration (log scale)</h3>
-					<Plot data={forceData} xLabel="Iteration" yLabel="|Force|" yAxisType="logarithmic" />
-				</div>
-			</div>
-		</div>
-	{/if}
-
-	<p style="text-align: center; margin-top: 2rem;">
-		<a href="/eq" class="btn btn-outline">← Back to Equilibrium Lab</a>
-	</p>
 </div>
-
-<style>
-	.header {
-		margin-bottom: 2rem;
-	}
-
-	.subtitle {
-		color: var(--color-text-secondary);
-		font-size: 1.1rem;
-		margin-top: 0.5rem;
-	}
-
-	.lab-description {
-		margin-bottom: 2rem;
-	}
-
-	.lab-description p {
-		margin-bottom: 1.5rem;
-		color: var(--color-text-secondary);
-		line-height: 1.7;
-	}
-
-	.equation-display {
-		background: var(--color-bg-alt);
-		padding: 1.5rem;
-		border-radius: var(--radius-md);
-		margin: 1.5rem 0;
-		text-align: center;
-	}
-
-	.equation-large {
-		display: inline-block;
-		font-size: 1.2rem;
-		margin-left: 1rem;
-	}
-
-	.species-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		gap: 1rem;
-		margin: 1.5rem 0;
-	}
-
-	.species-card {
-		background: var(--color-bg-alt);
-		padding: 1rem;
-		border-radius: var(--radius-md);
-		border: 1px solid var(--color-border);
-	}
-
-	.species-card h4 {
-		margin: 0 0 0.75rem 0;
-		color: var(--color-text);
-		font-size: 0.9rem;
-	}
-
-	.species-card .form-group {
-		margin-bottom: 0.75rem;
-	}
-
-	.species-card .form-group:last-child {
-		margin-bottom: 0;
-	}
-
-	.form-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-		gap: 1rem;
-		margin-bottom: 1.5rem;
-	}
-
-	.checkbox-group {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-		margin-bottom: 1.5rem;
-	}
-
-	.checkbox-label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		cursor: pointer;
-		color: var(--color-text);
-	}
-
-	.checkbox-label input[type='checkbox'] {
-		cursor: pointer;
-	}
-
-	details {
-		margin: 1rem 0;
-	}
-
-	summary {
-		cursor: pointer;
-		padding: 0.75rem 0;
-		color: var(--color-text);
-		user-select: none;
-		list-style-position: outside;
-	}
-
-	summary:hover {
-		color: var(--color-primary);
-	}
-
-	details[open] summary {
-		margin-bottom: 0.5rem;
-	}
-
-	details ol {
-		margin: 0.5rem 0;
-		padding-left: 1.5rem;
-	}
-
-	details li {
-		margin: 0.5rem 0;
-		color: var(--color-text-secondary);
-		line-height: 1.6;
-	}
-
-	h3 {
-		margin-top: 0;
-		margin-bottom: 1rem;
-	}
-
-	h4 {
-		margin-top: 1rem;
-		margin-bottom: 0.5rem;
-		color: rgba(255, 255, 255, 0.9);
-		font-size: 0.95rem;
-	}
-
-	.results-section {
-		margin-top: 2rem;
-	}
-
-	.metadata-card h4:first-of-type {
-		margin-top: 0.5rem;
-	}
-
-	.metadata-card p {
-		margin: 0.35rem 0;
-		font-size: 0.9rem;
-	}
-
-	.success-message {
-		color: #86efac;
-		font-weight: 500;
-		margin-bottom: 1rem;
-	}
-
-	.error-message {
-		color: #fca5a5;
-		font-weight: 500;
-		margin-bottom: 1rem;
-	}
-
-	.plots-container {
-		margin-top: 1.5rem;
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-		gap: 1.5rem;
-	}
-
-	@media (max-width: 768px) {
-		.plots-container {
-			grid-template-columns: 1fr;
-		}
-
-		.species-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-</style>
