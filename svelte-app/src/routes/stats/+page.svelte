@@ -34,19 +34,12 @@
 		fileContent = lab.writeDataToString();
 		filename = lab.outputFile || lab.filenameGen.random;
 
-		message = `### Running Experiment\n`;
-		for (const [k, v] of Object.entries(lab.metadata)) {
-			message += `#### ${k} = ${v}\n`;
-		}
-		message += `#### File created = ${filename}\n`;
-
 		showResults = true;
 	}
 
 	function resetCounter() {
 		lab.filenameGen.reset();
 		showResults = false;
-		message = '';
 	}
 
 	function handleDownload() {
@@ -58,169 +51,162 @@
 	<title>Statistics Lab</title>
 </svelte:head>
 
-<div class="container">
-	<div class="header">
-		<h1>Statistics Lab</h1>
-		<p class="subtitle">Basic statistical concepts and data analysis</p>
-	</div>
-
-	<div class="card lab-description">
-		<p>
-			This numerical lab consists a few small tasks, which cover the key statistics topics that
-			were introduced in the previous chapter. They are also preparatory for the following labs,
-			where you would have to use the same concepts in more complicated situations. In particular,
-			if you are using python, it would be beneficial to solve some of this exercises by creating
-			specific functions that can the be reused (maybe with small modifications) in the following
-			labs.
-		</p>
-
-		<details open>
-			<summary><strong>Tasks</strong></summary>
-			<ol>
-				<li>Average and standard error</li>
-				<li>Propagation of uncertainty</li>
-				<li>Comparison of averages</li>
-				<li>Linear Fit</li>
-				<li>Non linear fit</li>
-				<li>Outlier detection</li>
-			</ol>
-		</details>
-
-		<details open>
-			<summary><strong>Instructions</strong></summary>
-			<ol>
-				<li>Type your student ID</li>
-				<li>Select a task</li>
-				<li>Click "Run Experiment"</li>
-				<li>Analyse the data</li>
-			</ol>
-		</details>
-	</div>
-
-	<div class="card">
-		<h3>Experiment Parameters</h3>
-
-		<div class="form-group">
-			<label class="form-label" for="studentID">Student ID</label>
-			<input
-				class="form-input"
-				id="studentID"
-				type="text"
-				bind:value={studentID}
-				placeholder="Enter student ID"
-			/>
-		</div>
-
-		<div class="form-group">
-			<label class="form-label" for="outputFile">Output filename (optional)</label>
-			<input
-				class="form-input"
-				id="outputFile"
-				type="text"
-				bind:value={outputFile}
-				placeholder="Automatic"
-			/>
-		</div>
-
-		<div class="form-group">
-			<label class="form-label" for="sample">Select task</label>
-			<select class="form-select" id="sample" bind:value={sample}>
-				<option value={null}>--Select--</option>
-				{#each lab.availableSamples as sampleOption}
-					<option value={sampleOption}>{sampleOption}</option>
-				{/each}
-			</select>
-		</div>
-
-		{#if error}
-			<div class="alert alert-error">{error}</div>
-		{/if}
-
-		<div class="btn-group">
-			<button class="btn btn-primary" on:click={runExperiment}>Run Experiment</button>
-			<button class="btn btn-outline" on:click={resetCounter}>Reset Counter</button>
+<div class="min-h-screen bg-gray-50">
+	<div class="bg-white border-b border-gray-200">
+		<div class="max-w-7xl mx-auto px-6 py-6">
+			<h1 class="text-3xl font-bold text-gray-900">Statistics Lab</h1>
+			<p class="mt-2 text-gray-600">Basic statistical concepts and data analysis</p>
 		</div>
 	</div>
 
-	{#if showResults}
-		<div class="results-grid">
-			<div class="metadata-card">
-				<h3>Experiment Summary</h3>
-				{#each Object.entries(lab.metadata) as [key, value]}
-					<p><strong>{key}:</strong> {value}</p>
-				{/each}
-				<p><strong>File:</strong> {filename}</p>
-				<div style="margin-top: 1.5rem;">
-					<button class="btn btn-secondary" on:click={handleDownload}>
-						Download Data
-					</button>
+	<div class="max-w-7xl mx-auto px-6 py-8">
+		<div class="grid lg:grid-cols-2 gap-8 mb-8">
+			<div class="space-y-6">
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+					<h2 class="text-xl font-semibold text-gray-900 mb-4">About This Lab</h2>
+					<p class="text-gray-700 leading-relaxed mb-4">
+						This numerical lab covers key statistics topics that are essential for data analysis
+						in chemistry. Complete these exercises to prepare for more complex experimental analysis.
+					</p>
+
+					<details open class="mt-4">
+						<summary class="font-semibold text-gray-900 cursor-pointer select-none py-2">
+							Tasks
+						</summary>
+						<ol class="list-decimal list-inside space-y-2 text-gray-700 mt-2 ml-2">
+							<li>Average and standard error</li>
+							<li>Propagation of uncertainty</li>
+							<li>Comparison of averages</li>
+							<li>Linear Fit</li>
+							<li>Non linear fit</li>
+							<li>Outlier detection</li>
+						</ol>
+					</details>
+
+					<details class="mt-4">
+						<summary class="font-semibold text-gray-900 cursor-pointer select-none py-2">
+							Instructions
+						</summary>
+						<ol class="list-decimal list-inside space-y-2 text-gray-700 mt-2 ml-2">
+							<li>Enter your student ID</li>
+							<li>Select a task from the list</li>
+							<li>Click "Run Experiment" to generate data</li>
+							<li>Analyze the data using Python or Excel</li>
+						</ol>
+					</details>
 				</div>
 			</div>
 
-			{#if data.length > 0}
-				<div class="card">
-					<h3>Results Plot</h3>
-					<Plot {data} xLabel="X" yLabel="Y" />
+			<div>
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+					<h2 class="text-xl font-semibold text-gray-900 mb-6">Experiment Setup</h2>
+
+					<div class="space-y-4">
+						<div>
+							<label for="studentID" class="block text-sm font-medium text-gray-700 mb-1.5">
+								Student ID <span class="text-red-500">*</span>
+							</label>
+							<input
+								id="studentID"
+								type="text"
+								bind:value={studentID}
+								placeholder="Enter student ID"
+								class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+							/>
+						</div>
+
+						<div>
+							<label for="sample" class="block text-sm font-medium text-gray-700 mb-1.5">
+								Select Task <span class="text-red-500">*</span>
+							</label>
+							<select
+								id="sample"
+								bind:value={sample}
+								class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white"
+							>
+								<option value={null}>--Select--</option>
+								{#each lab.availableSamples as sampleOption}
+									<option value={sampleOption}>{sampleOption}</option>
+								{/each}
+							</select>
+						</div>
+
+						<div>
+							<label for="outputFile" class="block text-sm font-medium text-gray-700 mb-1.5">
+								Output Filename (optional)
+							</label>
+							<input
+								id="outputFile"
+								type="text"
+								bind:value={outputFile}
+								placeholder="Automatic"
+								class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+							/>
+						</div>
+
+						{#if error}
+							<div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+								{error}
+							</div>
+						{/if}
+
+						<div class="flex gap-3 pt-4">
+							<button
+								on:click={runExperiment}
+								class="flex-1 bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-amber-600 transition-colors"
+							>
+								Run Experiment
+							</button>
+							<button
+								on:click={resetCounter}
+								class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-primary hover:text-primary transition-colors"
+							>
+								Reset
+							</button>
+						</div>
+					</div>
 				</div>
-			{/if}
+			</div>
 		</div>
-	{/if}
+
+		{#if showResults}
+			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+				<h2 class="text-xl font-semibold text-gray-900 mb-6">Results</h2>
+
+				<div class="grid lg:grid-cols-3 gap-6">
+					<div class="lg:col-span-1">
+						<div class="bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-lg p-6">
+							<h3 class="font-semibold text-lg mb-4">Experiment Summary</h3>
+							<div class="space-y-2 text-sm">
+								{#each Object.entries(lab.metadata) as [key, value]}
+									<div class="flex justify-between">
+										<span class="opacity-90">{key}:</span>
+										<span class="font-medium">{value}</span>
+									</div>
+								{/each}
+								<div class="flex justify-between border-t border-white/20 pt-2 mt-2">
+									<span class="opacity-90">File:</span>
+									<span class="font-medium text-xs">{filename}</span>
+								</div>
+							</div>
+							<button
+								on:click={handleDownload}
+								class="w-full mt-4 bg-white text-amber-600 px-4 py-2 rounded-lg font-medium hover:bg-amber-50 transition-colors"
+							>
+								Download Data
+							</button>
+						</div>
+					</div>
+
+					<div class="lg:col-span-2">
+						<div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+							{#if data.length > 0}
+								<Plot {data} xLabel="X" yLabel="Y" />
+							{/if}
+						</div>
+					</div>
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>
-
-<style>
-	.header {
-		margin-bottom: 2rem;
-	}
-
-	.subtitle {
-		color: var(--color-text-secondary);
-		font-size: 1.1rem;
-		margin-top: 0.5rem;
-	}
-
-	.lab-description {
-		margin-bottom: 2rem;
-	}
-
-	.lab-description p:first-child {
-		margin-bottom: 1.5rem;
-		color: var(--color-text-secondary);
-		line-height: 1.7;
-	}
-
-	details {
-		margin: 1rem 0;
-	}
-
-	summary {
-		cursor: pointer;
-		padding: 0.75rem 0;
-		color: var(--color-text);
-		user-select: none;
-		list-style-position: outside;
-	}
-
-	summary:hover {
-		color: var(--color-primary);
-	}
-
-	details[open] summary {
-		margin-bottom: 0.5rem;
-	}
-
-	details ol,
-	details ul {
-		margin: 0.5rem 0;
-		padding-left: 1.5rem;
-	}
-
-	details li {
-		margin: 0.5rem 0;
-		color: var(--color-text-secondary);
-		line-height: 1.6;
-	}
-
-	h3 {
-		margin-top: 0;
-	}
-</style>
