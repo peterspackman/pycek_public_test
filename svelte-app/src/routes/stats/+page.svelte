@@ -175,7 +175,7 @@
 
 				<div class="grid lg:grid-cols-3 gap-6">
 					<div class="lg:col-span-1">
-						<div class="bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-lg p-6">
+						<div class="bg-amber-600 text-white rounded-lg p-6">
 							<h3 class="font-semibold text-lg mb-4">Experiment Summary</h3>
 							<div class="space-y-2 text-sm">
 								{#each Object.entries(lab.metadata) as [key, value]}
