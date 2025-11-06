@@ -334,15 +334,15 @@
 							{#if analytic}
 								<h4 class="text-sm font-semibold opacity-90 mt-4 mb-2">Analytic Solution</h4>
 								<div class="space-y-1 text-sm">
-									<p>Root 1: x = {analytic.x0.toFixed(6)}</p>
-									<p>Root 2: x = {analytic.x1.toFixed(6)}</p>
+									<p>Root 1 (physical): x = {analytic.x0.toFixed(6)}</p>
+									<p>Root 2 (unphysical): x = {analytic.x1.toFixed(6)}</p>
 									<p>
 										<strong>[A]<sub>analytic</sub>:</strong>
-										{(concA - 2 * analytic.x1).toFixed(6)} M
+										{(concA - 2 * analytic.x0).toFixed(6)} M
 									</p>
 									<p>
 										<strong>[B]<sub>analytic</sub>:</strong>
-										{(concB + analytic.x1).toFixed(6)} M
+										{(concB + analytic.x0).toFixed(6)} M
 									</p>
 								</div>
 							{/if}
