@@ -62,7 +62,7 @@
 	<div class="max-w-7xl mx-auto px-6 py-8">
 		<div class="grid lg:grid-cols-2 gap-8 mb-8">
 			<div class="space-y-6">
-				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-900">
 					<h2 class="text-xl font-semibold text-gray-900 mb-4">About This Lab</h2>
 					<p class="text-gray-700 leading-relaxed mb-4">
 						This numerical lab covers key statistics topics that are essential for data analysis
@@ -98,7 +98,7 @@
 			</div>
 
 			<div>
-				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-900">
 					<h2 class="text-xl font-semibold text-gray-900 mb-6">Experiment Setup</h2>
 
 					<div class="space-y-4">
@@ -170,7 +170,7 @@
 		</div>
 
 		{#if showResults}
-			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-900">
 				<h2 class="text-xl font-semibold text-gray-900 mb-6">Results</h2>
 
 				<div class="grid lg:grid-cols-3 gap-6">

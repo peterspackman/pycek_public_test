@@ -76,7 +76,7 @@
 		<div class="grid lg:grid-cols-2 gap-8 mb-8">
 			<!-- Left: Information -->
 			<div class="space-y-6">
-				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-900">
 					<h2 class="text-xl font-semibold text-gray-900 mb-4">About This Experiment</h2>
 					<p class="text-gray-700 leading-relaxed mb-4">
 						This experiment measures the kinetics of the reaction between crystal violet and hydroxide ions.
@@ -113,7 +113,7 @@
 
 			<!-- Right: Experiment Controls -->
 			<div>
-				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-900">
 					<h2 class="text-xl font-semibold text-gray-900 mb-6">Experiment Setup</h2>
 
 					<div class="space-y-4">
@@ -230,7 +230,7 @@
 
 		<!-- Results Section (Full Width) -->
 		{#if showResults}
-			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-900">
 				<h2 class="text-xl font-semibold text-gray-900 mb-6">Results</h2>
 
 				<div class="grid lg:grid-cols-3 gap-6">
