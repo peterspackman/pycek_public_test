@@ -15,19 +15,6 @@
 	let showResults = false;
 	let error = '';
 
-	function setID() {
-		if (studentID && /^\d+$/.test(studentID)) {
-			lab.setStudentID(parseInt(studentID));
-			error = '';
-		} else if (studentID) {
-			error = 'Invalid Student ID: must be a number';
-		}
-	}
-
-	function setFilename() {
-		lab.outputFile = outputFile === 'Automatic' ? null : outputFile;
-	}
-
 	function runExperiment() {
 		error = '';
 		if (!studentID || !/^\d+$/.test(studentID)) {
@@ -35,10 +22,12 @@
 			return;
 		}
 
+		lab.setStudentID(parseInt(studentID));
+		lab.outputFile = outputFile === 'Automatic' ? null : outputFile;
 		lab.setParameters({ temperature: temperature + 273.15 });
+
 		data = lab.createDataForLab();
 		fileContent = lab.writeDataToString();
-
 		filename = lab.outputFile || lab.filenameGen.random;
 
 		message = `### Running Experiment\n`;
@@ -52,7 +41,6 @@
 
 	function resetCounter() {
 		lab.filenameGen.reset();
-		lab.outputFile = null;
 		showResults = false;
 		message = '';
 	}
@@ -66,145 +54,168 @@
 	<title>Surface Adsorption Lab</title>
 </svelte:head>
 
-<div class="container">
-	<header class="lab-header">
-		<h1>Surface Adsorption Lab</h1>
-		<p class="subtitle">Dye adsorption on chitin surface - Langmuir isotherm analysis</p>
-	</header>
-
-	<div class="card lab-description">
-		<p>
-			In this virtual laboratory, we study the adsorption of <strong>Acid Blue 158</strong> dye on
-			chitin in water. The experiments simulate different temperature conditions to determine the
-			enthalpy of adsorption. The output contains the concentration of dye remaining in solution as
-			a function of the amount added.
-		</p>
-
-		<details open>
-			<summary><strong>Objectives</strong></summary>
-			<ol>
-				<li>Calculate Langmuir constant (K<sub>L</sub>) and monolayer coverage (Q) at different temperatures</li>
-				<li>Compare fitted values from linear and non-linear Langmuir isotherms</li>
-				<li>Calculate adsorption enthalpy</li>
-				<li>Compare with provided experimental values</li>
-			</ol>
-		</details>
-
-		<details>
-			<summary><strong>Instructions</strong></summary>
-			<ol>
-				<li>Enter your student ID</li>
-				<li>Select experiment temperature</li>
-				<li>Click "Run Experiment"</li>
-				<li>Repeat at 5 different temperatures for analysis</li>
-			</ol>
-		</details>
-	</div>
-
-	<div class="card">
-		<h3 style="margin-top: 0;">Experiment Parameters</h3>
-
-		<div class="form-group">
-			<label class="form-label" for="studentID">Student ID</label>
-			<input
-				class="form-input"
-				id="studentID"
-				type="text"
-				bind:value={studentID}
-				on:input={setID}
-				placeholder="Enter your student ID"
-			/>
-		</div>
-
-		<div class="form-group">
-			<label class="form-label" for="outputFile">Output Filename</label>
-			<input
-				class="form-input"
-				id="outputFile"
-				type="text"
-				bind:value={outputFile}
-				on:input={setFilename}
-				placeholder="Automatic"
-			/>
-		</div>
-
-		<div class="form-group">
-			<label class="form-label" for="temperature">Temperature (°C)</label>
-			<input class="form-input" id="temperature" type="number" bind:value={temperature} min="0" max="100" step="1" />
-		</div>
-
-		{#if error}
-			<div class="alert alert-error">{error}</div>
-		{/if}
-
-		<div class="btn-group">
-			<button class="btn btn-primary" on:click={runExperiment}>Run Experiment</button>
-			<button class="btn btn-outline" on:click={resetCounter}>Reset Counter</button>
+<div class="min-h-screen bg-gray-50">
+	<!-- Header -->
+	<div class="bg-white border-b border-gray-200">
+		<div class="max-w-7xl mx-auto px-6 py-6">
+			<h1 class="text-3xl font-bold text-gray-900">Surface Adsorption Lab</h1>
+			<p class="mt-2 text-gray-600">Langmuir isotherm and surface chemistry</p>
 		</div>
 	</div>
 
-	{#if showResults}
-		<div class="results-grid">
-			<div class="metadata-card">
-				<h3>Experiment Summary</h3>
-				{#each Object.entries(lab.metadata) as [key, value]}
-					<p><strong>{key}:</strong> {value}</p>
-				{/each}
-				<p><strong>File:</strong> {filename}</p>
-				<div style="margin-top: 1.5rem;">
-					<button class="btn btn-secondary" on:click={handleDownload}>
-						Download Data
-					</button>
+	<!-- Main Content -->
+	<div class="max-w-7xl mx-auto px-6 py-8">
+		<!-- Two Column Layout -->
+		<div class="grid lg:grid-cols-2 gap-8 mb-8">
+			<!-- Left: Information -->
+			<div class="space-y-6">
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+					<h2 class="text-xl font-semibold text-gray-900 mb-4">About This Experiment</h2>
+					<p class="text-gray-700 leading-relaxed mb-4">
+						Measure the adsorption of dye onto chitin surface using UV-Vis spectrophotometry. The
+						Langmuir isotherm model describes the equilibrium between dye in solution and dye
+						adsorbed on the surface.
+					</p>
+
+					<details open class="mt-4">
+						<summary class="font-semibold text-gray-900 cursor-pointer select-none py-2">
+							Objectives
+						</summary>
+						<ol class="list-decimal list-inside space-y-2 text-gray-700 mt-2 ml-2">
+							<li>Calculate the Langmuir constant K from experimental data</li>
+							<li>Determine thermodynamic parameters (ΔH and ΔS)</li>
+							<li>Analyze the adsorption isotherm</li>
+						</ol>
+					</details>
+
+					<details class="mt-4">
+						<summary class="font-semibold text-gray-900 cursor-pointer select-none py-2">
+							Instructions
+						</summary>
+						<ol class="list-decimal list-inside space-y-2 text-gray-700 mt-2 ml-2">
+							<li>Enter your student ID</li>
+							<li>Set the experimental temperature</li>
+							<li>Click "Run Experiment" to generate data</li>
+							<li>Download the CSV file for analysis</li>
+							<li>Repeat at different temperatures to determine ΔH and ΔS</li>
+						</ol>
+					</details>
 				</div>
 			</div>
 
-			{#if data.length > 0}
-				<div class="card">
-					<h3>Results Plot</h3>
-					<Plot {data} xLabel="Dye added (mg)" yLabel="Dye in solution (mol/L)" />
+			<!-- Right: Experiment Controls -->
+			<div>
+				<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+					<h2 class="text-xl font-semibold text-gray-900 mb-6">Experiment Setup</h2>
+
+					<div class="space-y-4">
+						<div>
+							<label for="studentID" class="block text-sm font-medium text-gray-700 mb-1.5">
+								Student ID <span class="text-red-500">*</span>
+							</label>
+							<input
+								id="studentID"
+								type="text"
+								bind:value={studentID}
+								placeholder="Enter student ID"
+								class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+							/>
+						</div>
+
+						<div>
+							<label for="temperature" class="block text-sm font-medium text-gray-700 mb-1.5">
+								Temperature (°C)
+							</label>
+							<input
+								id="temperature"
+								type="number"
+								bind:value={temperature}
+								min="15"
+								max="40"
+								step="1"
+								class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+							/>
+						</div>
+
+						<div>
+							<label for="outputFile" class="block text-sm font-medium text-gray-700 mb-1.5">
+								Output Filename (optional)
+							</label>
+							<input
+								id="outputFile"
+								type="text"
+								bind:value={outputFile}
+								placeholder="Automatic"
+								class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+							/>
+						</div>
+
+						{#if error}
+							<div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+								{error}
+							</div>
+						{/if}
+
+						<div class="flex gap-3 pt-4">
+							<button
+								on:click={runExperiment}
+								class="flex-1 bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-amber-600 transition-colors"
+							>
+								Run Experiment
+							</button>
+							<button
+								on:click={resetCounter}
+								class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-primary hover:text-primary transition-colors"
+							>
+								Reset
+							</button>
+						</div>
+					</div>
 				</div>
-			{/if}
+			</div>
 		</div>
-	{/if}
+
+		<!-- Results Section (Full Width) -->
+		{#if showResults}
+			<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+				<h2 class="text-xl font-semibold text-gray-900 mb-6">Results</h2>
+
+				<div class="grid lg:grid-cols-3 gap-6">
+					<!-- Metadata - narrower column -->
+					<div class="lg:col-span-1">
+						<div class="bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-lg p-6">
+							<h3 class="font-semibold text-lg mb-4">Experiment Summary</h3>
+							<div class="space-y-2 text-sm">
+								{#each Object.entries(lab.metadata) as [key, value]}
+									<div class="flex justify-between">
+										<span class="opacity-90">{key}:</span>
+										<span class="font-medium">{value}</span>
+									</div>
+								{/each}
+								<div class="flex justify-between border-t border-white/20 pt-2 mt-2">
+									<span class="opacity-90">File:</span>
+									<span class="font-medium text-xs">{filename}</span>
+								</div>
+							</div>
+							<button
+								on:click={handleDownload}
+								class="w-full mt-4 bg-white text-amber-600 px-4 py-2 rounded-lg font-medium hover:bg-amber-50 transition-colors"
+							>
+								Download Data
+							</button>
+						</div>
+					</div>
+
+					<!-- Plot - wider column -->
+					<div class="lg:col-span-2">
+						<div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+							{#if data.length > 0}
+								<Plot {data} xLabel="Dye added (mg)" yLabel="Dye in solution (mol/L)" />
+							{/if}
+						</div>
+					</div>
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>
-
-<style>
-	.lab-header {
-		margin-bottom: 2rem;
-	}
-
-	.subtitle {
-		font-size: 1.1rem;
-		color: var(--color-text-secondary);
-		margin-top: 0.5rem;
-		font-weight: 400;
-	}
-
-	.lab-description {
-		margin-bottom: 1.5rem;
-	}
-
-	details {
-		margin-top: 1.5rem;
-	}
-
-	summary {
-		cursor: pointer;
-		padding: 0.5rem 0;
-		user-select: none;
-	}
-
-	summary:hover {
-		color: var(--color-primary);
-	}
-
-	details ol {
-		margin-top: 0.75rem;
-		padding-left: 1.5rem;
-	}
-
-	details li {
-		margin: 0.5rem 0;
-		color: var(--color-text-secondary);
-	}
-</style>
